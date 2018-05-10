@@ -30,8 +30,6 @@ function createStore (reducer) {
     }
 }
 
-
-
 function todos (state = [], action) {
     if (action === 'ADD_TODO') {
         return state.concat([action.todo])
@@ -39,3 +37,18 @@ function todos (state = [], action) {
 
     return state
 }
+
+const store = createStore(todos)
+
+store.subscribe(()=>{
+    console.log('The new state is: ', store.getState())
+})
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Read a book',
+        complete: false
+    }
+})
