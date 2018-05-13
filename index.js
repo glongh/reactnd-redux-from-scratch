@@ -73,6 +73,7 @@ function removeTodoAction(id) {
     }
 }
 
+// Reducers
 function todos (state = [], action) {
     switch(action.type) {
         case ADD_TODO:
@@ -104,6 +105,7 @@ function app (state = {}, action) {
         goals: goals(state.goals, action)
     }
 }
+
 
 const store = createStore(todos)
 
