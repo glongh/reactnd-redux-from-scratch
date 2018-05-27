@@ -25,7 +25,7 @@
         const ADD_GOAL = 'ADD_GOAL'
         const REMOVE_GOAL = 'REMOVE_GOAL'
         const RECEIVE_DATA = 'RECEIVE_DATA'
-        
+
 
         // Action creators
         function addTodoAction(todo) {
@@ -101,6 +101,15 @@
             }
         }
 
+        function loading(state = true, action) {
+            switch (action.type) {
+                case RECEIVE_DATA:
+                    return false
+                default:
+                    return state
+            }
+        }
+
         // Middlewares
         const checker = (store) => (next) => (action) => {
             if (
@@ -133,7 +142,8 @@
         // The store
         const store = Redux.createStore(Redux.combineReducers({
             todos,
-            goals
+            goals,
+            loading
         }), Redux.applyMiddleware(checker, logger))
 
     </script>
@@ -173,6 +183,12 @@
             
             removeItem = (todo) => {
                 this.props.store.dispatch(removeTodoAction(todo.id))
+
+                return API.deleteTodo(todo.id)
+                    .catch(() => {
+                        this.props.store.dispatch(addTodoAction(todo))
+                        alert('An error ocurred. Try again.')
+                    })
             }
 
             toggleItem = (id) => {
@@ -209,6 +225,12 @@
 
             removeItem = (goal) => {
                 this.props.store.dispatch(removeGoalAction(goal.id))
+
+                return API.deleteGoal(goal.id)
+                    .catch(() => {
+                        this.props.store.dispatch(addGoalAction(goal))
+                        alert('An error ocurred. Try again.')
+                    })
             }
 
             render() {
@@ -240,7 +262,11 @@
 
             render() {
                 const { store } = this.props
-                const { todos, goals } = store.getState()
+                const { todos, goals, loading } = store.getState()
+
+                if (loading) {
+                    return (<h3>Loading...</h3>)
+                }
                 return (
                     <div>
                         <Todos todos={todos} store={this.props.store} />
